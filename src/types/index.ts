@@ -4,6 +4,21 @@ export enum CardType {
   MultipleChoice = 'multiple-choice'
 }
 
+export interface CardLevel {
+  level_index: number;
+  content: {
+    question: string;
+    answer: string;
+  };
+}
+
+export interface StudyCard {
+  id: string;
+  title: string;
+  levels: CardLevel[];
+  currentLevel: number;
+}
+
 export interface Card {
   id: string;
   term: string;

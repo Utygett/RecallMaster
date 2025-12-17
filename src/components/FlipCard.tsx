@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
-import { Card } from '../types';
+import { StudyCard } from '../types/study';
 import { LevelIndicator } from './LevelIndicator';
 import { motion } from 'motion/react';
 
 interface FlipCardProps {
-  card: Card;
+  card: StudyCard;
   isFlipped: boolean;
   onFlip: () => void;
 }
 
 export function FlipCard({ card, isFlipped, onFlip }: FlipCardProps) {
-  const getLevelContent = (card: Card, isFront: boolean) => {
-    if (isFront) {
-      return card.term;
-    }
-    
-    // Возвращаем контент текущего уровня из массива
-    return card.levels[card.currentLevel] || card.levels[0];
+  const getLevelContent = (card: StudyCard, isFront: boolean) => {
+    const level = card.levels[card.currentLevel] ?? card.levels[0];
+
+    return isFront
+      ? level.content.question
+      : level.content.answer;
   };
   
   return (

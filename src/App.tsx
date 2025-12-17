@@ -124,6 +124,10 @@ function MainAppContent() {
     levelUpCard,
     resetSession 
   } = useStudySession();
+  const [activeDeckId, setActiveDeckId] = useState<string | null>(null);
+  const [deckCards, setDeckCards] = useState<Card[]>([]);
+  const [loadingDeckCards, setLoadingDeckCards] = useState(false);
+
   
   // Проверяем, было ли приложение установлено как PWA
   useEffect(() => {
@@ -209,10 +213,32 @@ function MainAppContent() {
     }
   };
   
-  const handleDeckClick = (deckId: string) => {
-    // Можно добавить логику для начала изучения конкретной колоды
-    setIsStudying(true);
+  const handleDeckClick = async (deckId: string) => {
+    try {
+      setLoadingDeckCards(true);
+      setActiveDeckId(deckId);
+
+      const token = localStorage.getItem('access_token');
+      if (!token) throw new Error('No auth token');
+
+      const cardsFromApi = await ApiClient.getDeckCards(deckId, token);
+
+      const normalizedCards = cardsFromApi.map((c: any) => ({
+        id: c.card_id,
+        title: c.title,
+        levels: c.levels,
+        currentLevel: 0,
+      }));
+
+      setDeckCards(normalizedCards);
+      setIsStudying(true);
+    } catch (err) {
+      console.error('Failed to load deck cards:', err);
+    } finally {
+      setLoadingDeckCards(false);
+    }
   };
+
   
   // Показываем загрузку
   if (decksLoading || statsLoading) {
@@ -251,6 +277,13 @@ function MainAppContent() {
   
 if (isStudying) {
   // 1️⃣ Загрузка карточек
+  if (loadingDeckCards) {
+    return (
+      <div className="min-h-screen bg-dark flex items-center justify-center">
+        <div className="text-[#9CA3AF]">Загрузка карточек колоды…</div>
+      </div>
+    );
+  }
   if (sessionLoading) {
     return (
       <div className="min-h-screen bg-dark flex items-center justify-center">
@@ -296,8 +329,8 @@ if (isStudying) {
   return (
     <>
       <StudySession
-        cards={session.cards}
-        currentIndex={session.currentIndex}
+        cards={deckCards}
+        currentIndex={0}
         onRate={handleRate}
         onLevelUp={levelUpCard}
         onClose={handleCloseStudy}

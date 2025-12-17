@@ -121,11 +121,6 @@ export function StudySession({ cards, currentIndex, onRate, onLevelUp, onClose }
                 onClick={() => handleRate('easy')}
               />
             </div>
-            
-            {/* Next Review Info */}
-            <div className="text-center text-sm text-muted">
-              Следующее повторение через 3 дня
-            </div>
           </div>
         )}
       </div>

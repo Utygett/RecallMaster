@@ -49,4 +49,22 @@ export class ApiClient {
       { id: '2', term: 'JavaScript', definition: 'Язык программирования', deckId: '1', cardType: CardType.Flashcard, levels: 1 },
     ];
   }
+  static async getDeckCards(deckId: string, token: string) {
+    const res = await fetch(
+      `${this.API_BASE_URL}/decks/${deckId}/cards`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Failed to fetch deck cards: ${text}`);
+    }
+
+    return res.json();  
+  }
 }
