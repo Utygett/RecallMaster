@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useState, useEffect } from 'react';
 import { BottomNav } from './components/BottomNav';
 import { InstallPrompt } from './components/InstallPrompt';
@@ -9,7 +10,8 @@ import { Onboarding } from './screens/Onboarding/Onboarding';
 import { AuthProvider } from './auth/AuthContext';
 import { AuthGate } from './auth/AuthGate';
 import { CardType, Card, Deck, Statistics as StatsType, DifficultyRating } from './types';
-import { useDecks, useStatistics, useStudySession } from './hooks';
+import { useStatistics, useStudySession } from './hooks';
+import useDecks from './hooks/useDecks';
 import { ApiClient } from './api/client';
 
 // Компонент для отображения обновлений PWA
@@ -101,7 +103,7 @@ function OfflineStatus() {
   );
 }
 
-export default function App() {
+function MainAppContent() {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'study' | 'stats' | 'profile'>('home');
   const [isStudying, setIsStudying] = useState(false);
@@ -322,8 +324,6 @@ if (isStudying) {
   }
   
   return (
-    <AuthProvider>
-      <AuthGate>
         <div className="relative">
           {/* Уведомление об обновлении PWA */}
           <PWAUpdatePrompt />
@@ -451,6 +451,14 @@ if (isStudying) {
           <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
           <InstallPrompt />
         </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AuthGate>
+        <MainAppContent />
       </AuthGate>
     </AuthProvider>
   );

@@ -43,19 +43,19 @@ export function useCards(deckId?: string) {
   return { cards: data || [], loading, error, refresh };
 }
 
-export function useDecks() {
-  const { data, loading, error, fetchData } = useApiData<Deck[]>();
+// export function useDecks() {
+//   const { data, loading, error, fetchData } = useApiData<Deck[]>();
 
-  useEffect(() => {
-    fetchData(() => ApiClient.getDecks());
-  }, [fetchData]);
+//   useEffect(() => {
+//     fetchData(() => ApiClient.getDecks());
+//   }, [fetchData]);
 
-  const refresh = useCallback(() => {
-    fetchData(() => ApiClient.getDecks());
-  }, [fetchData]);
+//   const refresh = useCallback(() => {
+//     fetchData(() => ApiClient.getDecks());
+//   }, [fetchData]);
 
-  return { decks: data || [], loading, error, refresh };
-}
+//   return { decks: data || [], loading, error, refresh };
+// }
 
 export function useStatistics() {
   const { data, loading, error, fetchData } = useApiData<Statistics>();

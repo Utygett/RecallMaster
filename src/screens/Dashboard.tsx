@@ -1,12 +1,12 @@
 import React from 'react';
-import { Statistics, Deck } from '../types';
+import { Statistics, DeckSummary } from '../types';
 import { Button } from '../components/Button/Button';
 import { DeckCard } from '../components/DeckCard';
 import { Clock, BookOpen, Flame } from 'lucide-react';
 
 interface DashboardProps {
   statistics: Statistics;
-  decks: Deck[];
+  decks: DeckSummary[];
   onStartStudy: () => void;
   onDeckClick: (deckId: string) => void;
 }
@@ -67,9 +67,9 @@ export function Dashboard({ statistics, decks, onStartStudy, onDeckClick }: Dash
         <div className="space-y-3">
           {decks.map((deck) => (
             <DeckCard
-              key={deck.id}
+              key={deck.deck_id}
               deck={deck}
-              onClick={() => onDeckClick(deck.id)}
+              onClick={() => onDeckClick(deck.deck_id)}
             />
           ))}
         </div>

@@ -1,14 +1,14 @@
 // src/auth/AuthGate.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from './AuthContext';
-import { Login } from '../screens/Auth/Login';
-import { Register } from '../screens/Auth/Register';
+import { Login } from '../screens/auth/Login';
+import { Register } from '../screens/auth/Register';
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
-  const { token } = useAuth();
-  const [mode, setMode] = useState<'login' | 'register'>('login');
-  
-  if (!token) {
+  const { token, currentUser } = useAuth();
+  const [mode, setMode] = React.useState<'login' | 'register'>('login');
+
+  if (!token || !currentUser) {
     return mode === 'login' ? (
       <Login onSwitch={() => setMode('register')} />
     ) : (

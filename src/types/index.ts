@@ -51,4 +51,9 @@ export interface Achievement {
   progress?: number;
 }
 
+export interface DeckSummary {
+  deck_id: string;
+  title: string;
+}
+
 export type DifficultyRating = 'again' | 'hard' | 'good' | 'easy';

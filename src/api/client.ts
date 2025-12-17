@@ -1,9 +1,27 @@
 // src/api/client.ts
 import { Card, Deck, Statistics, DifficultyRating, CardType } from '../types';
+import { DeckSummary } from '../types';
 
-const API_BASE_URL = 'http://localhost:8000'; // твой локальный сервер
 
 export class ApiClient {
+  static API_BASE_URL = 'http://localhost:8000';
+
+  // Получаем колоды пользователя
+  static async getUserDecks(token: string): Promise<DeckSummary[]> {
+    const res = await fetch(`${this.API_BASE_URL}/decks/`, { // ✅ добавлен слеш
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Failed to fetch user decks: ${text}`);
+    }
+
+    return res.json();
+  }
   // ------------------------
   // MOCK API для теста (Decks/Statistics/ReviewCards)
   // ------------------------
