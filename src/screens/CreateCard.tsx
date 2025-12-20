@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button/Button';
 import { LevelIndicator } from '../components/LevelIndicator';
-import { X, Plus, Trash2 } from 'lucide-react';
+import { X, Plus, Trash2, Eye, EyeOff } from 'lucide-react';
 import type { DeckSummary } from '../types';
 import MDEditor from '@uiw/react-md-editor';
 import { MarkdownView } from '../components/MarkdownView';
@@ -38,8 +38,9 @@ export function CreateCard({ decks, onSave, onCancel }: CreateCardProps) {
     'Мастерство',
     'Инновации',
   ];
-  const [qMode, setQMode] = useState<'edit' | 'preview'>('edit');
-  const [aMode, setAMode] = useState<'edit' | 'preview'>('edit');
+  const [qPreview, setQPreview] = useState(false);
+  const [aPreview, setAPreview] = useState(false);
+
 
   const handleAddLevel = () => {
     if (levels.length < 10) {
@@ -175,19 +176,20 @@ export function CreateCard({ decks, onSave, onCancel }: CreateCardProps) {
             {/* Question */}
             <div className="card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label className="form-label">{`Вопрос (уровень ${activeLevel + 1})`}</label>
+                <label className="form-label">Вопрос</label>
 
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button type="button" onClick={() => setQMode('edit')} className="icon-btn">
-                    Редактирование
-                  </button>
-                  <button type="button" onClick={() => setQMode('preview')} className="icon-btn">
-                    Предпросмотр
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => setQPreview(v => !v)}
+                      className="icon-btn"
+                      aria-label={qPreview ? 'Выключить предпросмотр' : 'Включить предпросмотр'}
+                      title={qPreview ? 'Выключить предпросмотр' : 'Включить предпросмотр'}
+                    >
+                      {qPreview ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+
               </div>
-
-              {qMode === 'edit' ? (
+              {!qPreview ? (
                 <MDEditor
                   value={active.question}
                   onChange={(v) => patchLevel(activeLevel, { question: v ?? '' })}
@@ -203,19 +205,20 @@ export function CreateCard({ decks, onSave, onCancel }: CreateCardProps) {
             {/* Answer */}
             <div className="card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label className="form-label">{`Ответ (уровень ${activeLevel + 1})`}</label>
+                <label className="form-label">Ответ</label>
 
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button type="button" onClick={() => setAMode('edit')} className="icon-btn">
-                    Редактирование
+                  <button
+                    type="button"
+                    onClick={() => setAPreview(v => !v)}
+                    className="icon-btn"
+                    aria-label={aPreview ? 'Выключить предпросмотр' : 'Включить предпросмотр'}
+                    title={aPreview ? 'Выключить предпросмотр' : 'Включить предпросмотр'}
+                  >
+                    {aPreview ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
-                  <button type="button" onClick={() => setAMode('preview')} className="icon-btn">
-                    Предпросмотр
-                  </button>
-                </div>
               </div>
 
-              {aMode === 'edit' ? (
+              {!aPreview ? (
                 <MDEditor
                   value={active.answer}
                   onChange={(v) => patchLevel(activeLevel, { answer: v ?? '' })}
