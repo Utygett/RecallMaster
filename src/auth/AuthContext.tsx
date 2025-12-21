@@ -23,15 +23,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true); // для первого монтирования
 
-  // Получение текущего пользователя
   const fetchMe = async (jwtToken: string) => {
     const res = await fetch(`${API_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${jwtToken}` },
     });
-    if (!res.ok) throw new Error('Не удалось получить пользователя');
+
+    if (res.status === 401 || res.status === 403) {
+      throw new Error('unauthorized');
+    }
+
+    if (!res.ok) {
+      throw new Error('temporary_error');
+    }
+
     const user: User = await res.json();
     setCurrentUser(user);
   };
+
 
   // Логин с токеном
   const login = async (newToken: string) => {
@@ -47,19 +55,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setCurrentUser(null);
   };
 
-  // ⚡ Подтягиваем пользователя при старте, если токен есть
   useEffect(() => {
-    if (token) {
-      fetchMe(token)
-        .catch((err) => {
-          console.error('Не удалось получить currentUser:', err);
-          logout();
-        })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    if (!token) { setLoading(false); return; }
+
+    fetchMe(token)
+      .catch((err) => {
+        if (err.message === 'unauthorized') logout();
+        // иначе НЕ удаляем токен, просто показываем “сервер недоступен” и т.п.
+        console.error('fetchMe error:', err);
+      })
+      .finally(() => setLoading(false));
   }, [token]);
+
 
   return (
     <AuthContext.Provider value={{ token, currentUser, login, logout }}>
